@@ -58,10 +58,10 @@ class PMLRSpider(scrapy.Spider):
         try:
             title = response.meta['title'].replace("/"," ").removesuffix(".")+".pdf"
             year = response.meta['year']
-            os.makedirs(f"../../data/pdfs/ICML{year}/", exist_ok=True)
+            os.makedirs(f"../../../data/pdfs/ICML{year}/", exist_ok=True)
 
             self.logger.info('Saving PDF %s', title)
-            with open(f"../../data/pdfs/ICML{year}/{title}", 'wb') as f:
+            with open(f"../../../data/pdfs/ICML{year}/{title}", 'wb') as f:
                 f.write(response.body)
         except Exception as e:
             print(e)

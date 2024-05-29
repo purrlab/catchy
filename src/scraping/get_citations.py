@@ -10,6 +10,8 @@ from collections import Counter
 from tqdm import tqdm
 import csv
 import re
+from dotenv import find_dotenv, load_dotenv
+import os
 
 YEARS = [2024,2023,2022,2021,2020,2019,2018,2017,2016,2015,2014,2013]
 
@@ -17,6 +19,9 @@ YEARS = [2024,2023,2022,2021,2020,2019,2018,2017,2016,2015,2014,2013]
 def get_paper_semanticscholarID(paper_title):
     semanticscholarID = None
     url = f'https://api.semanticscholar.org/graph/v1/paper/search?query="{paper_title}"&limit=3'
+    headers = {'x-api-key': os.environ.get("API_KEY")}
+
+
     request_id = requests.get(url,allow_redirects=True,timeout=10)
     nb_try = 0
     while request_id.status_code != 200:
@@ -58,6 +63,8 @@ def get_paper_semanticscholar_data(semanticscholarID):
     return citations_per_year
 
 if __name__ == "__main__":
+    load_dotenv(find_dotenv())
+
     paths_pdf = glob.glob("./data/pdfs/*/*.pdf")
     papers_names = [path.split("/")[-1].removesuffix(".pdf") for path in paths_pdf]
     venues_papers = [path.split("/")[-2] for path in paths_pdf]

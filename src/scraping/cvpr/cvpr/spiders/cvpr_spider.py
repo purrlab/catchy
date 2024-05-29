@@ -29,7 +29,7 @@ class CVPRSpider(scrapy.Spider):
             # "https://openaccess.thecvf.com/CVPR2015",
             # "https://openaccess.thecvf.com/CVPR2016",
             # "https://openaccess.thecvf.com/CVPR2017",
-            "https://openaccess.thecvf.com/CVPR2018?day=2018-06-19",
+            # "https://openaccess.thecvf.com/CVPR2018?day=2018-06-19",
             # "https://openaccess.thecvf.com/CVPR2018?day=2018-06-20",
             # "https://openaccess.thecvf.com/CVPR2018?day=2018-06-21",
             # "https://openaccess.thecvf.com/CVPR2019?day=2019-06-18",
@@ -40,7 +40,7 @@ class CVPRSpider(scrapy.Spider):
             # "https://openaccess.thecvf.com/CVPR2020?day=2020-06-18",
             # "https://openaccess.thecvf.com/CVPR2021?day=all",
             # "https://openaccess.thecvf.com/CVPR2022?day=all",
-            "https://openaccess.thecvf.com/CVPR2023?day=all"
+            # "https://openaccess.thecvf.com/CVPR2023?day=all"
         ]
         super().__init__(**kwargs)
 
@@ -73,9 +73,9 @@ class CVPRSpider(scrapy.Spider):
         try:
             title = response.meta['title'].replace("/"," ").removesuffix(".")+".pdf"
             venue = response.meta['venue']
-            os.makedirs(f"../../data/pdfs/{venue}/", exist_ok=True)
+            os.makedirs(f"../../../data/pdfs/{venue}/", exist_ok=True)
             self.logger.info('Saving PDF %s', title)
-            save_path = f"../../data/pdfs/{venue}/{title}"
+            save_path = f"../../../data/pdfs/{venue}/{title}"
             with open(save_path, 'wb') as f:
                 f.write(response.body)
         except Exception as e:

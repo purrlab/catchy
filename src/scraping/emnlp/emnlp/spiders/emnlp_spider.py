@@ -34,7 +34,7 @@ class EMNLPSpider(scrapy.Spider):
             # "https://aclanthology.org/volumes/D16-1/",
             # "https://aclanthology.org/volumes/D15-1/",
             # "https://aclanthology.org/volumes/D14-1/",
-            "https://aclanthology.org/volumes/D13-1/",
+            # "https://aclanthology.org/volumes/D13-1/",
         ]
         self.years = [2023,2013]
 
@@ -69,9 +69,9 @@ class EMNLPSpider(scrapy.Spider):
         try:
             title = response.meta['title'].replace("/"," ").removesuffix(".")+".pdf"
             year = response.meta['year']
-            os.makedirs(f"../../data/pdfs/EMNLP{year}/", exist_ok=True)
+            os.makedirs(f"../../../data/pdfs/EMNLP{year}/", exist_ok=True)
             self.logger.info('Saving PDF %s', title)
-            save_path = f"../../data/pdfs/EMNLP{year}/{title}"
+            save_path = f"../../../data/pdfs/EMNLP{year}/{title}"
             with open(save_path, 'wb') as f:
                 f.write(response.body)
         except Exception as e:
