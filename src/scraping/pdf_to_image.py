@@ -25,7 +25,7 @@ def paper_pdf_to_image(paper_path):
     
     path_to_save = paper_path.replace("pdfs","imgs").removesuffix(".pdf")
     print()
-    os.makedirs(f"./data/imgs/{path_to_save.split("/")[-2]}/", exist_ok=True)
+    os.makedirs(f"./data/imgs/{path_to_save.split('/')[-2]}/", exist_ok=True)
     grid_img.save(path_to_save+".png")
 
 def main():
