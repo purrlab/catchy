@@ -25,20 +25,19 @@ class EMNLPSpider(scrapy.Spider):
         self.is_persistent = False
         self.start_url = [
             "https://aclanthology.org/volumes/2023.emnlp-main/",
-            # "https://aclanthology.org/volumes/2022.emnlp-main/",
-            # "https://aclanthology.org/volumes/2021.emnlp-main/",
-            # "https://aclanthology.org/volumes/2020.emnlp-main/",
-            # "https://aclanthology.org/volumes/D19-1/",
-            # "https://aclanthology.org/volumes/D18-1/",
-            # "https://aclanthology.org/volumes/D17-1/",
-            # "https://aclanthology.org/volumes/D16-1/",
-            # "https://aclanthology.org/volumes/D15-1/",
-            # "https://aclanthology.org/volumes/D14-1/",
-            # "https://aclanthology.org/volumes/D13-1/",
+            "https://aclanthology.org/volumes/2022.emnlp-main/",
+            "https://aclanthology.org/volumes/2021.emnlp-main/",
+            "https://aclanthology.org/volumes/2020.emnlp-main/",
+            "https://aclanthology.org/volumes/D19-1/",
+            "https://aclanthology.org/volumes/D18-1/",
+            "https://aclanthology.org/volumes/D17-1/",
+            "https://aclanthology.org/volumes/D16-1/",
+            "https://aclanthology.org/volumes/D15-1/",
+            "https://aclanthology.org/volumes/D14-1/",
+            "https://aclanthology.org/volumes/D13-1/",
         ]
-        self.years = [2023,2013]
 
-        # self.years = [2023,2022,2021,2020,2019,2018,2017,2016,2015,2014,2013]
+        self.years = [2023,2022,2021,2020,2019,2018,2017,2016,2015,2014,2013]
         super().__init__(**kwargs)
 
     def start_requests(self):

@@ -29,8 +29,7 @@ class PMLRSpider(scrapy.Spider):
         # flag to signal if the crawl is in persistent mode
         self.is_persistent = False
         self.start_url = start_url.split(',')
-        self.years = [2023,2013]
-        # self.years = [2023,2022,2021,2020,2019,2018,2017,2016,2015,2014,2013]
+        self.years = [2023,2022,2021,2020,2019,2018,2017,2016,2015,2014,2013]
         super().__init__(**kwargs)
 
     def start_requests(self):
