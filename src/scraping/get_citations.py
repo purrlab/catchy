@@ -18,19 +18,21 @@ YEARS = [2024,2023,2022,2021,2020,2019,2018,2017,2016,2015,2014,2013]
 
 def get_paper_semanticscholarID(paper_title):
     semanticscholarID = None
-    url = f'https://api.semanticscholar.org/graph/v1/paper/search?query="{paper_title}"&limit=3'
     headers = {'x-api-key': os.environ.get("API_KEY")}
-
-
-    request_id = requests.get(url,allow_redirects=True,timeout=10)
+    url = f'https://api.semanticscholar.org/graph/v1/paper/search?query="{paper_title}"&limit=3'
+    request_id = requests.get(url,headers=headers,allow_redirects=True,timeout=120)
     nb_try = 0
     while request_id.status_code != 200:
+        print(paper_title,request_id.status_code)
         nb_try += 1
         if nb_try >= 4:
             print("Number of try exceeded to get ID")
             return None
+        elif request_id.status_code != 429:
+            print(f"Error {request_id.status_code}")
+            return None
         time.sleep(5)
-        request_id = requests.get(url,allow_redirects=True,timeout=10)
+        request_id = requests.get(url,headers=headers,allow_redirects=True,timeout=120)
 
     r_json = request_id.json()
     if "data" in r_json:
@@ -39,18 +41,21 @@ def get_paper_semanticscholarID(paper_title):
     return semanticscholarID
 
 def get_paper_semanticscholar_data(semanticscholarID):
+    headers = {'x-api-key': os.environ.get("API_KEY")}
+
     citations_per_year = Counter()
 
     url = f"https://api.semanticscholar.org/v1/paper/{semanticscholarID}?include_unknown_references=true"
-    request_data = requests.get(url,allow_redirects=True,timeout=10)
+    request_data = requests.get(url,headers=headers,allow_redirects=True,timeout=120)
     nb_try = 0
     while request_data.status_code != 200:
+        print(semanticscholarID,request_data.status_code)
         nb_try += 1
         if nb_try >= 4:
             print("Number of try exceeded to fetch data")
             return None
         time.sleep(5)
-        request_data = requests.get(url,allow_redirects=True,timeout=10)
+        request_data = requests.get(url,headers=headers,allow_redirects=True,timeout=120)
     
     r_json = request_data.json()
     if "citations" in r_json:
@@ -74,15 +79,14 @@ if __name__ == "__main__":
         fieldnames = ["title","venue_published","year_published","pdf_path","semanticscholar_id"]
         fieldnames += [f"citations_{year}" for year in YEARS]
         csvwriter = csv.writer(csv_file)
-
+        paper_num = 0
         for path,title,venue in tqdm(zip(paths_pdf,papers_names,venues_papers),total=len(paths_pdf)):
             if existing_data['title'].str.contains(re.escape(str(title))).any():
+                paper_num += 1
                 continue
-            semanticscholarID = get_paper_semanticscholarID(title)
-            
-            #Follow API rate limit of 1 query per second (see section "Do I need an API key?" section at https://www.semanticscholar.org/product/api)
-            time.sleep(1)
-            
+            if paper_num%100==0:
+                time.sleep(1)
+            semanticscholarID = get_paper_semanticscholarID(title)            
             
             row = [title,venue[:-4],venue[-4:],path,semanticscholarID]
             citations_per_year = {y:None for y in YEARS}
@@ -91,5 +95,4 @@ if __name__ == "__main__":
             row += [citations_per_year.get(y,0) for y in YEARS]
             
             csvwriter.writerow(row)
-            
-            time.sleep(1)
+            paper_num += 1
