@@ -54,7 +54,7 @@ class CVPRSpider(scrapy.Spider):
 
         for article in response.xpath('.//dt[*]'):
             try:
-                url = response.url.removesuffix(f"/{response.meta['venue']}") + "/" + article.xpath('a/@href').get().replace("/html/","/papers/").replace(".html",".pdf")
+                url = "https://openaccess.thecvf.com" + "/" + article.xpath('a/@href').get().replace("/html/","/papers/").replace(".html",".pdf")
                 yield Request(
                     url=url,
                     meta={
