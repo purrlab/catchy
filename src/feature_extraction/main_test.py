@@ -1,4 +1,4 @@
-'''
+"""
 Get all features from given list of papers
 code structure:
 src/feature_extraction/
@@ -13,8 +13,8 @@ data/imgs/
 ├── ...  (For test time, download the imgs and pdfs from google drive)
 data/pdfs/
 ├── ... (For test time, download the imgs and pdfs from google drive)
-  
-'''
+
+"""
 
 import pandas as pd
 import csv
@@ -24,8 +24,9 @@ from tqdm import tqdm
 
 # FORMAT: from get_feature_a import get_feature_a1, get_feature_a2, get_feature_a3
 from get_features_lftk import get_features_lftk_all
+from get_page_objects import ImageExtractor
 
-'''
+"""
 metadata contains:
 ['index', 'title', 'venue_published', 'year_published', 'authors',
        'abstract', 'pdf_path', 'img_path', 'semanticscholar_id',
@@ -34,11 +35,12 @@ metadata contains:
 
 output scv contains title,venue_published,year_published; 
        and features extracted from the paper
-'''
+"""
 
 INPUT_CSV = "data/metadata/selected_papers_annotations_final.csv"
-OUTPUT_CSV = "results/extracted_features/" + INPUT_CSV.split('/')[-1].replace('.csv', '_features.csv')
-
+OUTPUT_CSV = "results/extracted_features/" + INPUT_CSV.split("/")[-1].replace(
+    ".csv", "_features.csv"
+)
 
 
 def load_dataset(csv_path):
@@ -48,44 +50,43 @@ def load_dataset(csv_path):
         yield row.to_dict()
 
 
-
 def main():
+
+    # create YOLO model for object detection
+    img_extractor = ImageExtractor()
 
     results = []
 
     for file in tqdm(load_dataset(INPUT_CSV)):
         try:
-            features_lftk = get_features_lftk_all(file)
-            # TODO: 
+            # features_lftk = get_features_lftk_all(file)
+            page_objects = img_extractor.extract_objects(file.get("img_path"))
+            # TODO:
             # other features
             # ....
             result = {
-                'title': file.get('title'),
-                'venue_published': file.get('venue_published'),
-                'year_published': file.get('year_published'),
-                **features_lftk,
+                "title": file.get("title"),
+                "venue_published": file.get("venue_published"),
+                "year_published": file.get("year_published"),
+                # **features_lftk,
+                **page_objects,
                 # TODO
-                # other features 
+                # other features
             }
             results.append(result)
 
-            
-
         except Exception as e:
-            print(f"Error processing {file.get('pdf_path')}: {e}")    
-        
-
+            print(f"Error processing {file.get('pdf_path')}: {e}")
 
     if results:
         keys = results[0].keys()
         os.makedirs(os.path.dirname(OUTPUT_CSV), exist_ok=True)
-        with open(OUTPUT_CSV, 'w', newline='') as f:
+        with open(OUTPUT_CSV, "w", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=keys)
             writer.writeheader()
             writer.writerows(results)
         print(f"Results saved to {OUTPUT_CSV}")
 
+
 if __name__ == "__main__":
     main()
-
-    
